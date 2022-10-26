@@ -39,6 +39,6 @@ python3 ./vulnspy.py
 ```
 
 <br>
-IMPORTANT : You need to configure SMTP and Discord options in script :<br>
+<b>IMPORTANT : You need to configure SMTP and Discord options in script :</b><br><br>
 <img src="https://docs.lestutosdeprocessus.fr/vulnspy_config.png" width="70%;">
 <br><br><br><br>
