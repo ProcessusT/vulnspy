@@ -31,9 +31,13 @@ On last version (V 1.0) :<br />
 
 ## Installation
 <br>
-```git clone https://github.com/Processus-Thief/vulnspy
+
+```python
+git clone https://github.com/Processus-Thief/vulnspy
 cd vulnspy/
-python3 ./vulnspy.py```
+python3 ./vulnspy.py
+```
+
 <br>
 IMPORTANT : You need to configure SMTP and Discord options in script :<br>
 <img src="https://docs.lestutosdeprocessus.fr/vulnspy_config.png" width="70%;">
