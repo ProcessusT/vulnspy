@@ -14,7 +14,7 @@
 
 > VULNSPY regularly retrieves the latest alerts published by the CERT-FR<br>
 > and the related vulnerabilities with their CVSS score and allows you to<br />
-> notify by email or by discord if a defined threshold is exceeded<br>
+> notify by email, slack or by discord if a defined threshold is exceeded<br>
 <br />
 <br>
 <div align="center">
@@ -24,8 +24,13 @@
 
 
 ## Changelog
+
 <br />
-On last version (V 1.1) :<br />
+On last version (V 1.2) :<br />
+- Add Slack Notifer
+- Dependencies => requirements.txt
+<br />
+Version 1.1  :<br />
 - Complete rewrite for discord bot and webhook<br />
 - Best format for message output<br />
 <br />
@@ -45,6 +50,6 @@ python3 ./vulnspy.py
 ```
 
 <br>
-<b>IMPORTANT : You need to configure SMTP and Discord options in script :</b><br><br>
+<b>IMPORTANT : You need to configure SMTP, Discord and Slack options in script :</b><br><br>
 <img src="https://docs.lestutosdeprocessus.fr/vulnspy_config.png" width="70%;">
 <br><br><br><br>
