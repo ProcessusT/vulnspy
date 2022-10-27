@@ -39,6 +39,8 @@ Version 1.0 :<br />
 ```python
 git clone https://github.com/Processus-Thief/vulnspy
 cd vulnspy/
+python3 -m venv .venv
+pip install -r requirements.txt
 python3 ./vulnspy.py
 ```
 
