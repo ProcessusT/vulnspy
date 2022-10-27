@@ -1,6 +1,22 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# _date_ : 26/10/2022
+#
+# VULNSPY
+#
+# V 1.1
+#
+# Copyright (C) 2022 Les tutos de Processus. All rights reserved.
+#
+#
+# Description:
+#   VULNSPY regularly retrieves the latest published vulnerabilities 
+#    with their CVSS score and allows you to alert by email if a 
+#    defined threshold is exceeded
+#
+# Author:
+#   Processus (@ProcessusT)
+# CoAuthor:
+#   Vozec (@Vozec1) (Code ReWritten)
+
 
 config_scraper = {
 	'max_day_to_retrieve': 1,
