@@ -201,7 +201,7 @@ def parse_args():
     parser = argparse.ArgumentParser(add_help=True, description='This tool is used to scrape last CVE published on CERT-FR')
     parser.add_argument("-b","--bot",dest="bot", action="store_true", default=False, help="Use Discord bot mode.")
     parser.add_argument("-w","--webhook",dest="webhook", action="store_true", default=False, help="Use Webhook bot mode.")
-    parser.add_argument("-e","--email",dest="mail", action="store_true", default=False, help="Use Email mode.")
+    parser.add_argument("-e","--email",dest="email", action="store_true", default=False, help="Use Email mode.")
     args = parser.parse_args()
     return args
 
