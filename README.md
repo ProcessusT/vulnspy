@@ -25,7 +25,11 @@
 
 ## Changelog
 <br />
-On last version (V 1.0) :<br />
+On last version (V 1.1) :<br />
+- Complete rewrite for discord bot and webhook<br />
+- Best format for message output<br />
+<br />
+Version 1.0 :<br />
 - Notify by email and by discord<br />
 <br />
 
