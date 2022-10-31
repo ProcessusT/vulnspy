@@ -47,6 +47,11 @@ config_mail = {
 	'smtp_tls' : False
 }
 
+config_slack = {
+	"slack_token": "<SLACK_TOKEN>",
+	 "channel": "<CXXXXXXXX>" 
+	}
+
 is_scraping_now = False
 
 ###########################################################################################
@@ -206,6 +211,26 @@ def email_send(msg):
 		print('Error: %s'%ex)
 
 ###########################################################################################
+## SLACK ##################################################################################
+###########################################################################################
+
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
+
+def slack_msg(cves):
+    base_msg = "".join(discord_msg(cves))
+    slack_msg = base_msg.replace("__", "_").replace("**", "*")
+    return slack_msg
+
+
+def slack_send(msg):
+    client = WebClient(token=config_slack["slack_token"])
+    try:
+        response = client.chat_postMessage(channel=config_slack["channel"], text=msg)
+    except SlackApiError as ex:
+        print("Error: %s" % ex)
+
+###########################################################################################
 ## UTILS ##################################################################################
 ###########################################################################################
 
@@ -218,6 +243,7 @@ def parse_args():
     parser.add_argument("-b","--bot",dest="bot", action="store_true", default=False, help="Use Discord bot mode.")
     parser.add_argument("-w","--webhook",dest="webhook", action="store_true", default=False, help="Use Webhook bot mode.")
     parser.add_argument("-e","--email",dest="email", action="store_true", default=False, help="Use Email mode.")
+    parser.add_argument("-s","--slack",dest="slack",action="store_true",default=False,help="Use Slack mode.")
     args = parser.parse_args()
     return args
 
@@ -333,7 +359,7 @@ def scrape_all_cve(max_days=config_scraper['max_day_to_retrieve']):
 
 
 def main(args):
-	if args.bot == args.webhook == args.email == False:
+	if args.bot == args.webhook == args.email == args.slack == False:
 		print('Please specify an notification mode  (see --help) ')
 		return -1
 
@@ -355,6 +381,12 @@ def main(args):
 		if args.email:
 			all_msg = email_msg(last_cve)
 			email_send(all_msg)
+			return 1
+
+        # If slack mode => Send whith slack
+		if args.slack:
+			all_msg = slack_msg(last_cve)
+			slack_send(all_msg)
 			return 1
 
 if __name__ == "__main__":	
