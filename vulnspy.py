@@ -75,7 +75,7 @@ bot = commands.Bot(
 )
 def check_admin(id_):
 	# Check if user can use Bot
-	return id_ == config_bot['admin_id']
+	return id_ == int(config_bot['admin_id'])
 
 # Split message without splitting ``` 
 def discord_split(text, len_max=1500):
@@ -159,6 +159,7 @@ async def help(ctx):
 async def refresh(ctx,maxday=config_scraper["max_day_to_retrieve"]):
 	# Check if is_admin
 	if not check_admin(ctx.message.author.id):
+		print("ERROR : not admin")
 		return
 
 	# Block if there is another scrape
@@ -180,8 +181,9 @@ async def refresh(ctx,maxday=config_scraper["max_day_to_retrieve"]):
 		maxday = config_scraper["max_day_to_retrieve"]
 
 	# Scrape CVE & Send 
-	last_cve = scrape_all_cve(maxday)
 	channel = await bot.fetch_channel(config_bot['channel_id'])
+	await channel.send("Starting Scraping CVEs (It could take several minutes)...")
+	last_cve = scrape_all_cve(maxday)
 	for msg in discord_msg(last_cve):
 		await channel.send(msg)
 
@@ -192,26 +194,35 @@ async def refresh(ctx,maxday=config_scraper["max_day_to_retrieve"]):
 import smtplib, ssl
 from email.mime.text import MIMEText
 
-def email_msg(cves):
+def email_msg(last_cve):
 	email_msg = ''.join(discord_msg(last_cve))
 	to_rep = ['**','__','```']
 	for x in to_rep:
 		email_msg = email_msg.replace(x,'')
 	return email_msg
 
-def email_send(msg):
+def email_send(message):
 	try:
-		context = ssl.create_default_context() if config_mail['smtp_ssl'] else None
+		context = ssl.create_default_context() if config_mail['smtp_ssl'] or config_mail['smtp_tls'] else None
 		d1 = datetime.now().strftime("%d-%m-%Y %H:%M")
 		msg = MIMEText(message)
 		msg['Subject'] = "Compte-rendu alertes du CERT-FR " + str(d1)
 		msg['From'] = config_mail['smtp_login']
 		msg['To'] =  ','.join(config_mail['recipients'])
-		with smtplib.SMTP(config_mail['smtp_server'], config_mail['smtp_port'], context=context) as server:
-			if smtp_auth == True:
-				server.login(config_mail['smtp_login'],config_mail['smtp_password'])
-			for recipient in config_mail['recipients']:
-				server.sendmail(config_mail['smtp_login'], config_mail['recipients'], msg.as_string())
+		if config_mail['smtp_ssl']:
+			with smtplib.SMTP_SSL(config_mail['smtp_server'], config_mail['smtp_port'], context=context) as server:
+				if config_mail['smtp_auth']:
+					server.login(config_mail['smtp_login'],config_mail['smtp_password'])
+				for recipient in config_mail['recipients']:
+					server.sendmail(config_mail['smtp_login'], recipient, msg.as_string())
+		else:
+			with smtplib.SMTP(config_mail['smtp_server'], config_mail['smtp_port']) as server:
+				if config_mail['smtp_tls']:
+					server.starttls(context=context)
+				if config_mail['smtp_auth']:
+					server.login(config_mail['smtp_login'],config_mail['smtp_password'])
+				for recipient in config_mail['recipients']:
+					server.sendmail(config_mail['smtp_login'], recipient, msg.as_string())
 	except Exception as ex:
 		print('Error: %s'%ex)
 
