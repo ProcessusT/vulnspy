@@ -52,6 +52,11 @@ config_slack = {
 	 "channel": "<CXXXXXXXX>" 
 	}
 
+config_telegram = {
+	"token": "<BOT_TOKEN>",
+	"chat_id": "<CHAT_ID>"
+	}
+
 is_scraping_now = False
 
 ###########################################################################################
@@ -231,6 +236,23 @@ def slack_send(msg):
         print("Error: %s" % ex)
 
 ###########################################################################################
+## TELEGRAM ###############################################################################
+###########################################################################################
+
+import asyncio
+import telegram
+
+def telegram_msg(cves):
+    base_msg = "".join(discord_msg(cves))
+    telegram_msg = base_msg.replace("__", "_").replace("**", "*")
+    return telegram_msg
+
+def telegram_send(msg):
+	bot = telegram.Bot(token=config_telegram["token"])
+	bot.send_message(chat_id=config_telegram["chat_id"], text=msg)
+	
+
+###########################################################################################
 ## UTILS ##################################################################################
 ###########################################################################################
 
@@ -244,6 +266,7 @@ def parse_args():
     parser.add_argument("-w","--webhook",dest="webhook", action="store_true", default=False, help="Use Webhook bot mode.")
     parser.add_argument("-e","--email",dest="email", action="store_true", default=False, help="Use Email mode.")
     parser.add_argument("-s","--slack",dest="slack",action="store_true",default=False,help="Use Slack mode.")
+    parser.add_argument("-t","--telegram",dest="telegram",action="store_true",default=False,help="Use Telegram mode.")
     args = parser.parse_args()
     return args
 
@@ -359,7 +382,7 @@ def scrape_all_cve(max_days=config_scraper['max_day_to_retrieve']):
 
 
 def main(args):
-	if args.bot == args.webhook == args.email == args.slack == False:
+	if args.bot == args.webhook == args.email == args.slack == args.telegram == False:
 		print('Please specify an notification mode  (see --help) ')
 		return -1
 
@@ -387,6 +410,12 @@ def main(args):
 		if args.slack:
 			all_msg = slack_msg(last_cve)
 			slack_send(all_msg)
+			return 1
+
+		# If telegram mode => Send whith telgram
+		if args.telegram:
+			all_msg = telegram_msg(last_cve)
+			telegram_send(all_msg)
 			return 1
 
 if __name__ == "__main__":	
